@@ -1,5 +1,8 @@
 const config = require("config")
 const redis = require("redis")
+const { SlashCreator, GatewayServer } = require('slash-create')
+const path = require('path')
+
 const TagBotClient = require("./Client.js")
 
 const commandHandler = require(`./Commands/Handler.js`)
@@ -10,6 +13,20 @@ const Cache = require(`./Util/Cache`)
 const Client = new TagBotClient()
 const commands = new commandHandler(`${__dirname}/Commands/Commands`)
 
+const creator = new SlashCreator({
+	applicationID: config.get('applicationId'),
+	publicKey: config.get('publicKey'),
+	token: config.get('Token'),
+	client: Client,
+})
+
+creator
+	.withServer(
+		new GatewayServer(
+			(handler) => Client.ws.on('INTERACTION_CREATE', handler),
+		),
+	)
+	.registerCommandsIn(path.join(__dirname, 'Commands'))
 
 const redisCli = redis.createClient({
 	host: config.get('redis.host'),
@@ -29,7 +46,13 @@ const r = require("rethinkdbdash")({
 async function init () {
 	let connection
 	try {
-		connection = await r.connect(config.get('rethink'))
+		connection = await r.connect({
+			host: config.get('db.url'),
+			port: config.get('db.port'),
+			password: config.get('db.pass'),
+			user: config.get('db.user'),
+			db: config.get('db.db'),
+		})
 		console.log("\u001b[92mConnected to rethink\u001b[39m")
 	} catch (e) {
 		console.error('Failed to connect to rethink: ', e)
@@ -51,7 +74,11 @@ async function init () {
 
 	Client.login()
 
-	Client.on("message", (message) => {
+	Client.on('ready', () => {
+		console.log(`\u001b[92mLogged in as ${Client.user.username}\u001b[39m`)
+	})
+
+	Client.on("messageCreate", (message) => {
 		messageHandler(message)
 	})
 }

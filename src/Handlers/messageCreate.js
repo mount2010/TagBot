@@ -106,7 +106,6 @@ const checkHasCooldown = async (client, message, command, now, cooldownTime = nu
  * @author Mackan
  */
 module.exports = async (message) => {
-
 	if(message.author.bot || !message.hasPerm("SEND_MESSAGES")){
 		return
 	}
@@ -172,10 +171,11 @@ module.exports = async (message) => {
 
 	Args.shift()
 
-
-	if(client.commands.Commands.All.indexOf(command) <= -1){
+	// console.log(client.commands)
+	// console.log(client.commands.Commands.All.includes(command))
+	// console.log(command)
+	if(!client.commands.Commands.All.includes(command)){
 		// Check if tag exists
-		console.log("tag 2")
 
 		const tag = await tagClass.getTag(command)
 

@@ -4,23 +4,9 @@ const config = require('config')
 class TagBotClient extends Discord.Client {
 	constructor () {
 		super({
-			autoReconnect: true,
-			disableEveryone: true,
-			messageCacheMaxSize: 5,
-			messageCacheLifetime: 10,
-			messageSweepInterval: 60,
-			bot: true,
-			disabledEvents: [
-				"TYPING_START",
-				"GUILD_INTEGRATIONS_UPDATE",
-				"GUILD_BAN_ADD",
-				"GUILD_BAN_REMOVE",
-				"CHANNEL_PINS_UPDATE",
-				//"PRESENCE_UPDATE",
-				"VOICE_STATE_UPDATE",
-				"VOICE_SERVER_UPDATE",
-				"WEBHOOKS_UPDATE",
-			],
+			retryLimit: 5,
+			intents: [ 'DirectMessages', 'DirectMessageReactions', 'GuildWebhooks', 'GuildInvites', 'GuildMessages', 'GuildMessageReactions', 'Guilds', 'MessageContent' ],
+			partials: [ 'CHANNEL', 'REACTION' ],
 		})
 
 		Discord.Message.prototype.sendError = function (error) {
@@ -51,7 +37,7 @@ class TagBotClient extends Discord.Client {
 	 * @author Mackan
 	 */
 	login() {
-		return super.login(config.get('token'))
+		return super.login(config.get('Token'))
 	}
 
 	/**

@@ -1,6 +1,6 @@
 {
 	"Token": "",
-	"Owner": "141610251299454976",
+	"owner": "141610251299454976",
 	"TagCooldown": 5,
 	"db": {
 		"user": "",
@@ -8,5 +8,14 @@
 		"url": "",
 		"port": 0,
 		"db": ""
-	}
+	},
+	"redis": {
+		"host": "",
+		"port": ""
+	},
+	"applicationId": "",
+	"publicKey": "",
+	"guildId": "",
+	"prefix": "",
+	"debug": false
 }
